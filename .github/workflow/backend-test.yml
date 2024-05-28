@@ -2,13 +2,9 @@ name: Backend testing
 
 on:
   push:
-    branches: [ "main", "Back-end" ]
-  pull_request: 
-    branches: [ "Back-end" ]
-
-env:
-  ENVIRONMENT_PLATFORM: qa
-  MAIL_KEY: ${{ secrets.MAIL_TOKEN }}
+    branches: [ "main", "backend" ]
+  pull_request:
+    branches: [ "backend" ]
 
 concurrency:
   group: ci-${{ github.ref }}-group
@@ -20,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./c18-32-ft-java-angular
+        working-directory: ./Backend
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
