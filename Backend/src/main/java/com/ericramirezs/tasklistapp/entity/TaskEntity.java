@@ -61,7 +61,6 @@ public class TaskEntity {
     @NotNull
     @CreationTimestamp
     @Column(name = "created_at",
-            insertable = false,
             updatable = false,
             nullable = false,
             columnDefinition = "TIMESTAMP WITH TIME ZONE")
