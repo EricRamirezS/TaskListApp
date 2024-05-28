@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -59,7 +60,11 @@ public class TaskEntity {
      */
     @NotNull
     @CreationTimestamp
-    @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @Column(name = "created_at",
+            insertable = false,
+            updatable = false,
+            nullable = false,
+            columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime createdAt;
 
     /**
@@ -69,4 +74,9 @@ public class TaskEntity {
     @NotNull
     @Column(name = "active", nullable = false)
     private Boolean active;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = OffsetDateTime.now();
+    }
 }

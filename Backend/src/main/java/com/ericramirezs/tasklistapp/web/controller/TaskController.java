@@ -6,7 +6,9 @@ import com.ericramirezs.tasklistapp.model.task.PatchTaskDto;
 import com.ericramirezs.tasklistapp.model.task.TaskDto;
 import com.ericramirezs.tasklistapp.model.task.UpdateTaskDto;
 import com.ericramirezs.tasklistapp.service.TaskService;
+import com.ericramirezs.tasklistapp.util.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -47,6 +49,11 @@ public class TaskController {
      */
     @GetMapping
     @Operation(summary = "Get all tasks", description = "Retrieve all tasks stored in the system.")
+    @ApiResponse(
+            responseCode = "200",
+            content = @Content(
+                    mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = TaskDto.class))))
     public ResponseEntity<Iterable<TaskDto>> getTasks() {
         return ResponseEntity.ok(TaskDto.ofEntityList(taskService.getAll()));
     }
@@ -59,10 +66,14 @@ public class TaskController {
      */
     @PostMapping
     @Operation(summary = "Create a new task", description = "Create a new task with the provided details.")
-    @ApiResponse(responseCode = "201", description = "Task created successfully", content = {@Content(mediaType =
-            "application/json", schema = @Schema(implementation = TaskDto.class))})
+    @ApiResponse(
+            responseCode = "201",
+            description = "Task created successfully",
+            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TaskDto.class))})
     public ResponseEntity<TaskDto> createTask(@Valid @RequestBody CreateTaskDto taskDto) {
-        TaskEntity task = TaskEntity.builder().description(taskDto.getDescription()).active(true).build();
+        TaskEntity task = TaskEntity.builder()
+                .description(taskDto.getDescription())
+                .active(true).build();
 
         task = taskService.create(task);
 
@@ -78,7 +89,9 @@ public class TaskController {
     @Operation(summary = "Delete all tasks", description = "Delete all tasks stored in the system.")
     public ResponseEntity<Iterable<TaskDto>> deleteAllTask() {
         Iterable<TaskDto> tasks = TaskDto.ofEntityList(taskService.getAll());
+
         taskService.deleteAll();
+
         return ResponseEntity.ok(tasks);
     }
 
@@ -90,10 +103,22 @@ public class TaskController {
      */
     @GetMapping("/{id}")
     @Operation(summary = "Get a task by ID", description = "Retrieve a task by its unique identifier.")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Task found"), @ApiResponse(responseCode
-            = "404", description = "Task not found")})
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Task found",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TaskDto.class))}),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Task not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))})
     public ResponseEntity<TaskDto> getTask(@PathVariable Long id) {
-        TaskEntity task = taskService.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        TaskEntity task = taskService.getById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         return ResponseEntity.ok(new TaskDto(task));
     }
@@ -107,10 +132,22 @@ public class TaskController {
      */
     @PutMapping("/{id}")
     @Operation(summary = "Update a task by ID", description = "Update an existing task with the provided details.")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Task updated successfully"),
-            @ApiResponse(responseCode = "404", description = "Task not found")})
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Task updated successfully",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TaskDto.class))}),
+            @ApiResponse(
+            responseCode = "404",
+            description = "Task not found",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorResponse.class)))})
     public ResponseEntity<TaskDto> updateTask(@PathVariable Long id, @Valid @RequestBody UpdateTaskDto taskDto) {
-        TaskEntity task = taskService.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        TaskEntity task = taskService.getById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         task.setDescription(taskDto.getDescription());
         task.setActive(taskDto.getActive());
@@ -129,13 +166,27 @@ public class TaskController {
     @PatchMapping("/{id}")
     @Operation(summary = "Partially update a task by ID", description =
             "Partially update an existing task with the " + "provided details.")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Task patched successfully"),
-            @ApiResponse(responseCode = "404", description = "Task not found")})
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Task patched successfully",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TaskDto.class))}),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Task not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))})
     public ResponseEntity<TaskDto> patchTask(@PathVariable Long id, @Valid @RequestBody PatchTaskDto taskDto) {
-        TaskEntity task = taskService.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        TaskEntity task = taskService.getById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        TaskEntity patchData =
-                TaskEntity.builder().description(taskDto.getDescription()).active(taskDto.getActive()).build();
+        TaskEntity patchData = TaskEntity.builder()
+                .description(taskDto.getDescription())
+                .active(taskDto.getActive())
+                .build();
 
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setSkipNullEnabled(true);
@@ -155,10 +206,23 @@ public class TaskController {
      */
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a task by ID", description = "Delete a task by its unique identifier.")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Task deleted successfully"),
-            @ApiResponse(responseCode = "404", description = "Task not found")})
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Task deleted successfully",
+                    content = {@Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = TaskDto.class))}),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Task not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)))})
     public ResponseEntity<TaskDto> deleteTask(@PathVariable Long id) {
-        TaskEntity task = taskService.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        TaskEntity task = taskService.getById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
         taskService.deleteById(task.getId());
 
         return ResponseEntity.ok(new TaskDto(task));

@@ -3,6 +3,6 @@ server:
   port: '8080'
 spring:
   application:
-    name: c18-32-ft-java-angular
+    name: TaskListApp
   profiles:
     active: ${ENVIRONMENT_PLATFORM:dev}
