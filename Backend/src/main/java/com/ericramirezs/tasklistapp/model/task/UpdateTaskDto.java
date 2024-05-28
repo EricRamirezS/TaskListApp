@@ -1,5 +1,6 @@
 package com.ericramirezs.tasklistapp.model.task;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class UpdateTaskDto {
     @NotNull
     @Size(min = 1, message = "{validation.name.size.too_short}")
     @Size(max = 60, message = "{validation.name.size.too_long}")
+    @Schema(minLength = 1, maxLength = 60, example = "I'm a task")
     private String description;
     /**
      * Indicates whether the task is active.
