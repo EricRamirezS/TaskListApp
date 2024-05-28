@@ -1,0 +1,8 @@
+server:
+  forward-headers-strategy: framework
+  port: '8080'
+spring:
+  application:
+    name: c18-32-ft-java-angular
+  profiles:
+    active: ${ENVIRONMENT_PLATFORM:dev}

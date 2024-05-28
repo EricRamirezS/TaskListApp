@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    username: ${DB_USER}
+    url: jdbc:${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLM}
+    password: ${DB_PASS}
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+logging:
+  level:
+    root: warn
