@@ -6,3 +6,6 @@ spring:
     name: TaskListApp
   profiles:
     active: ${ENVIRONMENT_PLATFORM:dev}
+task-list-app:
+  http:
+    auth-token: ${API_KEY:sample_key}
