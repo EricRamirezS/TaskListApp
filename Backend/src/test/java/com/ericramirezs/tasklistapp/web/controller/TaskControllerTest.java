@@ -1,5 +1,6 @@
 package com.ericramirezs.tasklistapp.web.controller;
 
+import com.ericramirezs.tasklistapp.annotation.WithMockAuth;
 import com.ericramirezs.tasklistapp.entity.TaskEntity;
 import com.ericramirezs.tasklistapp.model.task.CreateTaskDto;
 import com.ericramirezs.tasklistapp.model.task.PatchTaskDto;
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static com.ericramirezs.tasklistapp.utils.TaskHelper.createTask;
@@ -35,6 +37,7 @@ class TaskControllerTest {
     private TaskService taskService;
 
     @Test
+    @WithMockAuth
     public void givenTasks_whenGetTasks_thenReturnJsonArray() throws Exception {
         // Given
         TaskEntity task1 = createTask(1L, "Task 1");
@@ -56,6 +59,7 @@ class TaskControllerTest {
     }
 
     @Test
+    @WithMockAuth
     public void givenTaskDto_whenCreateTask_thenReturnCreatedTaskDto() throws Exception {
         // Given
         CreateTaskDto createTaskDto = new CreateTaskDto();
@@ -78,6 +82,7 @@ class TaskControllerTest {
     }
 
     @Test
+    @WithMockAuth
     public void givenTaskExists_whenGetTaskById_thenReturnTaskDto() throws Exception {
         // Given
         TaskEntity task = createTask(1L, "Task 1");
@@ -94,6 +99,7 @@ class TaskControllerTest {
     }
 
     @Test
+    @WithMockAuth
     public void givenTaskDoesNotExist_whenGetTaskById_thenThrowNotFound() throws Exception {
         // Given No Task
 
@@ -107,6 +113,7 @@ class TaskControllerTest {
     }
 
     @Test
+    @WithMockAuth
     public void givenUpdatedTaskDto_whenUpdateTask_thenReturnUpdatedTaskDto() throws Exception {
         // Given
         UpdateTaskDto updateTaskDto = new UpdateTaskDto();
@@ -134,6 +141,7 @@ class TaskControllerTest {
     }
 
     @Test
+    @WithMockAuth
     public void givenPatchTaskDto_whenPatchTask_thenReturnPatchedTaskDto() throws Exception {
         // Given
         PatchTaskDto patchTaskDto = new PatchTaskDto();
@@ -161,6 +169,7 @@ class TaskControllerTest {
 
 
     @Test
+    @WithMockAuth
     public void givenTaskExists_whenDeleteTaskById_thenReturnDeletedTaskDto() throws Exception {
         // Given
         TaskEntity task = createTask(1L, "Task 1");
@@ -177,6 +186,7 @@ class TaskControllerTest {
     }
 
     @Test
+    @WithMockAuth
     public void givenTaskDoesNotExist_whenDeleteTaskById_thenThrowNotFound() throws Exception {
         //Given No Task
 
@@ -187,5 +197,108 @@ class TaskControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/tasks/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    public void givenNoApiKey_whenGetTasks_thenReturnUnauthorized() throws Exception {
+        // Given
+
+        // When
+        when(taskService.getAll()).thenReturn(List.of());
+
+        // Then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/tasks")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    public void givenNoApiKey_whenGetTaskById_thenReturnUnauthorized() throws Exception {
+        // Given
+        TaskEntity task = createTask(1L, "Task 1");
+
+        // When
+        when(taskService.getById(1L)).thenReturn(Optional.of(task));
+
+        // Then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/tasks/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    public void givenNoApiKey_whenDeleteTaskById_thenReturnUnauthorized() throws Exception {
+        // Given
+        TaskEntity task = createTask(1L, "Task 1");
+
+        // When
+        when(taskService.getById(1L)).thenReturn(Optional.of(task));
+
+        // Then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/tasks/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    public void givenNoApiKey_whenPatchTask_thenReturnUnauthorized() throws Exception {
+        // Given
+        PatchTaskDto patchTaskDto = new PatchTaskDto();
+        patchTaskDto.setDescription("Patched Task");
+        TaskEntity existingTask = createTask(1L, "Task 1", true);
+        TaskEntity patchedTask = createTask(1L, "Patched Task", true);
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // When
+        when(taskService.getById(1L)).thenReturn(Optional.of(existingTask));
+        when(taskService.update(any(TaskEntity.class))).thenReturn(patchedTask);
+
+        // Then
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/tasks/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(patchTaskDto)))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    public void givenNoApiKey_whenUpdateTask_thenReturnUnauthorized() throws Exception {
+        // Given
+        UpdateTaskDto updateTaskDto = new UpdateTaskDto();
+        updateTaskDto.setDescription("Updated Task");
+        updateTaskDto.setActive(true);
+
+        TaskEntity existingTask = createTask(1L, "Task 1", false);
+
+        TaskEntity updatedTask = createTask(1L, "Updated Task", true);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // When
+        when(taskService.getById(1L)).thenReturn(Optional.of(existingTask));
+        when(taskService.update(any(TaskEntity.class))).thenReturn(updatedTask);
+
+        // Then
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/tasks/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateTaskDto)))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+    @Test
+    public void givenNoApiKey_whenCreateTask_thenReturnUnauthorized() throws Exception {
+        // Given
+        TaskEntity task = createTask(1L, "Created Task", true);
+        CreateTaskDto taskDto = new CreateTaskDto();
+        taskDto.setDescription("Created Task");
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // When
+        when(taskService.create(any(TaskEntity.class))).thenReturn(task);
+
+        // Then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/tasks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(taskDto)))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 }

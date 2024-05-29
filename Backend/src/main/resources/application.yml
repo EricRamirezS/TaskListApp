@@ -9,8 +9,3 @@ spring:
 task-list-app:
   http:
     auth-token: ${API_KEY:sample_key}
-
-springdoc:
-  swagger-ui:
-    csrf:
-      enabled: true
