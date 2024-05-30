@@ -5,9 +5,12 @@ import {
     FILTER_TASK,
     MARK_COMPLETED,
     MARK_UNCOMPLETED,
-    UPDATE_SEARCH_TERM, ENABLE_EDIT_DESCRIPTION
+    UPDATE_SEARCH_TERM, ENABLE_EDIT_DESCRIPTION, LOAD_TASKS
 } from './actionTypes.js';
 import Task from '../models/Task.js';
+
+let task_id = 0;
+
 
 const initialState = {
     tasks: [],
@@ -15,15 +18,19 @@ const initialState = {
     searchTerm: ''
 };
 
-let task_id = 0;
-
 const taskReducer = (state = initialState, action) => {
     if (!action.payload) return state;
 
     switch (action.type) {
+        case LOAD_TASKS:
+            return {
+                tasks: action.payload.tasks,
+                filter: state.filter,
+                searchTerm: state.searchTerm
+            };
         case ADD_TASK:
             return {
-                tasks: [...state.tasks, new Task(task_id++, action.payload.description, true, Date.now())],
+                tasks: [new Task(action.payload.id, action.payload.description, true, action.payload.createdAt), ...state.tasks],
                 filter: state.filter,
                 searchTerm: state.searchTerm
             };
@@ -47,6 +54,7 @@ const taskReducer = (state = initialState, action) => {
                 filter: state.filter,
                 searchTerm: state.searchTerm
             };
+
         case DELETE_TASK:
             return {
                 tasks: state.tasks.filter(task => task.id !== action.payload.id),

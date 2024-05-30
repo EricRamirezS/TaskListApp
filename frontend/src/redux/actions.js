@@ -1,4 +1,5 @@
 import {
+    LOAD_TASKS,
     ADD_TASK,
     MARK_UNCOMPLETED,
     MARK_COMPLETED,
@@ -8,10 +9,20 @@ import {
     UPDATE_SEARCH_TERM, ENABLE_EDIT_DESCRIPTION
 } from './actionTypes.js';
 
-export const addTask = (description) => ({
+export const loadTasks = (tasks) => ({
+    type: LOAD_TASKS,
+    payload: {
+        tasks,
+    }
+});
+
+
+export const addTask = (id, description, createdAt) => ({
     type: ADD_TASK,
     payload: {
+        id,
         description,
+        createdAt,
     }
 });
 

@@ -1,3 +1,4 @@
+export const LOAD_TASKS = 'LOAD_TASKS';
 export const ADD_TASK = 'ADD_TASK';
 export const MARK_COMPLETED = 'MARK_COMPLETED';
 export const MARK_UNCOMPLETED = 'MARK_UNCOMPLETED';
