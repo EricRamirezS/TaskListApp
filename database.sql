@@ -1,6 +1,6 @@
-CREATE DATABASE "testDB";
+CREATE DATABASE "tasksDB";
 
-\c testDB
+\c tasksDB
 
 CREATE TABLE IF NOT EXISTS public.tasks
 (
