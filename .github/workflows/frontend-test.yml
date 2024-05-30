@@ -3,7 +3,7 @@ on:
   push:
     branches: [ "main", "frontend" ]
   pull_request:
-    branches: [ "frontend" ]
+    branches: [ "main", "frontend" ]
 jobs:
   Test-Frontend:
     runs-on: ubuntu-latest
