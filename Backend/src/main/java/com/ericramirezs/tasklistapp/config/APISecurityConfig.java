@@ -12,6 +12,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Configuration class for securing the API endpoints using Spring Security.
+ * It configures security settings such as disabling CSRF, setting session management to stateless,
+ * and adding a custom API key filter.
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -20,6 +25,13 @@ public class APISecurityConfig {
     private final ApiKeyFilter authFilter;
     private final UnauthorizedHandler unauthorizedHandler;
 
+    /**
+     * Configures the security filter chain, applying custom security settings.
+     *
+     * @param http the {@link HttpSecurity} to configure.
+     * @return the configured {@link SecurityFilterChain}.
+     * @throws Exception if an error occurs while configuring the security settings.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
