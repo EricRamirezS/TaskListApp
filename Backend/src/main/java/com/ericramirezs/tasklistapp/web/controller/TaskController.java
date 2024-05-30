@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -35,6 +36,7 @@ import org.springframework.web.server.ResponseStatusException;
  * Controller class for managing tasks.
  * Provides RESTful endpoints for performing CRUD operations on tasks.
  */
+@CrossOrigin
 @RestController
 @SecurityRequirement(name = "api_key")
 @RequestMapping("/api/tasks")
