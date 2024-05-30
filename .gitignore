@@ -1,3 +1,20 @@
+HELP.md
+target/
+!Backend/.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
 # Created by https://www.toptal.com/developers/gitignore/api/java,react,node,webstorm,intellij+all,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,react,node,webstorm,intellij+all,visualstudiocode
 
@@ -52,7 +69,18 @@ cmake-build-*/
 
 # File-based project format
 *.iws
+*.iml
+*.ipr
 
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
 # IntelliJ
 out/
 
@@ -277,6 +305,8 @@ sketch
 
 # Local History for Visual Studio Code
 .history/
+### VS Code ###
+.vscode/
 
 # Built Visual Studio Code Extensions
 *.vsix
